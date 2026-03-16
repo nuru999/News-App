@@ -1,22 +1,34 @@
-import { useState } from "react"
+import { useState, useEffect } from "react";
 
 const NewsBoard = () => {
 
-    const [article,setArticles] = useState([]);
+  const [articles, setArticles] = useState([]);
 
-    useEffect(()=>{
-        let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${import.meta.env.VITE_API_KEY}`;
-        fetch(url).then(response=> response.json()).then(data=> setArticles(data.articles))
+  useEffect(() => {
+    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${import.meta.env.VITE_API_KEY}`;
 
-    },[])
+    fetch(url)
+      .then(response => response.json())
+      .then(data => setArticles(data.articles));
+
+  }, []);
+
   return (
     <div>
-      <h2 className="text-center">Latest <span className="badge bg-danger">News</span></h2>
-      {articles.map((news,index)=>{
-        return
+      <h2 className="text-center">
+        Latest <span className="badge bg-danger">News</span>
+      </h2>
+
+      {articles.map((news, index) => {
+        return (
+          <div key={index}>
+            <h4>{news.title}</h4>
+            <p>{news.description}</p>
+          </div>
+        );
       })}
     </div>
-  )
-}
+  );
+};
 
-export default NewsBoard
+export default NewsBoard;
