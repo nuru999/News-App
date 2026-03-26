@@ -1,13 +1,17 @@
-import Navbar from "./Components/Navbar"
-import NewsBoard from "./Components/NewsBoard"
+import { useState } from 'react';
+import './App.css'; 
+import Navbar from './Components/Navbar';
+import NewsBoard from './Components/NewsBoard';
 
-const App = () => {
+function App() {
+  const [searchQuery, setSearchQuery] = useState('');
+
   return (
     <div>
-    <Navbar/>
-    <NewsBoard/>
+      <Navbar onSearch={setSearchQuery} />
+      <NewsBoard searchQuery={searchQuery} />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
