@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Search, Moon, Sun, Menu } from 'lucide-react'; // npm install lucide-react
+import { Search, Moon, Sun, Menu } from 'lucide-react';
 
-const Navbar = () => {
+const Navbar = ({ onSearch }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [query, setQuery] = useState('');
 
+  /* 🌙 Dark Mode */
   useEffect(() => {
     if (darkMode) {
       document.documentElement.setAttribute('data-theme', 'dark');
@@ -13,6 +15,7 @@ const Navbar = () => {
     }
   }, [darkMode]);
 
+  /* 📜 Scroll Effect */
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -21,33 +24,49 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  /* 🔍 LIVE SEARCH (Debounce for performance) */
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      onSearch(query);
+    }, 500); // waits 0.5s after typing
+
+    return () => clearTimeout(delay);
+  }, [query, onSearch]);
+
   return (
-    <nav className={`navbar ${isScrolled ? 'shadow-lg' : ''}`}>
+    <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="nav-content">
-        <div className="logo">NewsMag</div>
-        
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <button 
-            className="theme-toggle"
+
+        <h1 className="logo">NewsMag</h1>
+
+        <div className="nav-right">
+
+          {/* 🔍 SEARCH */}
+          <div className="search-container">
+            <Search size={18} className="search-icon" />
+            <input
+              type="text"
+              placeholder="Search news..."
+              className="search-input"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+          </div>
+
+          {/* 🌙 DARK MODE */}
+          <button
+            className="icon-btn"
             onClick={() => setDarkMode(!darkMode)}
-            aria-label="Toggle theme"
           >
-            {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+            {darkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          
-          <button className="theme-toggle" style={{ display: 'none' }}>
-            <Menu size={20} />
+
+          {/* 📱 MOBILE MENU (future use) */}
+          <button className="icon-btn mobile-only">
+            <Menu size={18} />
           </button>
+
         </div>
-      </div>
-      
-      <div className="search-container">
-        <Search className="search-icon" size={20} />
-        <input 
-          type="text" 
-          placeholder="Search news..." 
-          className="search-input"
-        />
       </div>
     </nav>
   );

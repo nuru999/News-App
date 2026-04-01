@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './App.css'; 
+import './App.css';
 import Navbar from './Components/Navbar';
 import NewsBoard from './Components/NewsBoard';
 
@@ -7,9 +7,16 @@ function App() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <div>
+    <div className="app">
+      
+      {/* 🔝 Navbar */}
       <Navbar onSearch={setSearchQuery} />
-      <NewsBoard searchQuery={searchQuery} />
+
+      {/* 🧱 Main Content */}
+      <main className="app-container">
+        <NewsBoard searchQuery={searchQuery} />
+      </main>
+
     </div>
   );
 }
