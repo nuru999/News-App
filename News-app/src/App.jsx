@@ -5,16 +5,21 @@ import NewsBoard from './Components/NewsBoard';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [view, setView] = useState('home'); // 'home' or 'saved'
 
   return (
     <div className="app">
       
       {/* 🔝 Navbar */}
-      <Navbar onSearch={setSearchQuery} />
+      <Navbar
+        onSearch={setSearchQuery}
+        onViewChange={setView}
+        view={view}
+      />
 
       {/* 🧱 Main Content */}
       <main className="app-container">
-        <NewsBoard searchQuery={searchQuery} />
+        <NewsBoard searchQuery={searchQuery} view={view} />
       </main>
 
     </div>

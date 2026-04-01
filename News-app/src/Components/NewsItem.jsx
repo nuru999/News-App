@@ -1,7 +1,7 @@
 import { ArrowRight, Bookmark } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-const NewsItem = ({ article }) => {
+const NewsItem = ({ article, onSavedChange }) => {
   const [imageError, setImageError] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -27,6 +27,10 @@ const NewsItem = ({ article }) => {
 
     localStorage.setItem('savedNews', JSON.stringify(savedArticles));
     setSaved(!saved);
+
+    if (onSavedChange) {
+      onSavedChange();
+    }
   };
 
   return (
@@ -42,9 +46,12 @@ const NewsItem = ({ article }) => {
       </div>
 
       <div className="news-content">
-        <span className="news-category">
-          {article.source?.name || 'News'}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+          <span className="news-category">{article.source?.name || 'News'}</span>
+          <small style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+            {article.publishedAt ? new Date(article.publishedAt).toLocaleString() : 'Unknown date'}
+          </small>
+        </div>
 
         <h2 className="news-title">{article.title}</h2>
 

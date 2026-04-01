@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import NewsItem from './NewsItem';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 /* ---------------- Skeleton ---------------- */
 const SkeletonCard = () => (
@@ -26,34 +26,57 @@ const ErrorState = ({ onRetry }) => (
   </div>
 );
 
-const EmptyState = ({ searchQuery }) => (
+const EmptyState = ({ message }) => (
   <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
-    <h3>No articles found</h3>
+    <h3>{message}</h3>
     <p style={{ color: 'var(--text-secondary)' }}>
-      {searchQuery
-        ? `No results for "${searchQuery}"`
-        : 'No news available'}
+      {message === 'No saved articles yet'
+        ? 'Save articles by clicking the bookmark icon.'
+        : 'Use the search bar or change category.'}
     </p>
   </div>
 );
 
 /* ---------------- Main ---------------- */
-const NewsBoard = ({ searchQuery = '' }) => {
+const NewsBoard = ({ searchQuery = '', view = 'home' }) => {
   const [articles, setArticles] = useState([]);
   const [category, setCategory] = useState('general');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(false);
+  const [savedArticles, setSavedArticles] = useState([]);
 
   const categories = ['General', 'Technology', 'Sports', 'Business', 'Health', 'Entertainment'];
   const API_KEY = import.meta.env.VITE_API_KEY;
+  const PAGE_SIZE = 12;
 
-  /* 🔥 RESET ARTICLES WHEN CONTEXT CHANGES */
+  const loadSavedArticles = useCallback(() => {
+    const saved = JSON.parse(localStorage.getItem('savedNews') || '[]');
+    setSavedArticles(saved);
+  }, []);
+
+  /* ✨ DATA RESET ON CONTEXT CHANGES */
   useEffect(() => {
+    setPage(1);
     setArticles([]);
-  }, [category, searchQuery]);
+    setError(null);
+    setHasMore(false);
+  }, [category, searchQuery, view]);
 
-  /* 🔥 FETCH NEWS */
-  const fetchNews = async () => {
+  /* 📥 FETCH SAVED ON SAVED VIEW */
+  useEffect(() => {
+    if (view === 'saved') {
+      setLoading(true);
+      setError(null);
+      loadSavedArticles();
+      setLoading(false);
+    }
+  }, [view, loadSavedArticles]);
+
+  const fetchNews = useCallback(async () => {
+    if (view !== 'home') return;
+
     setLoading(true);
     setError(null);
 
@@ -61,37 +84,71 @@ const NewsBoard = ({ searchQuery = '' }) => {
       let url;
 
       if (searchQuery.trim()) {
-        url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(
-          searchQuery
-        )}&sortBy=publishedAt&apiKey=${API_KEY}`;
+        url = `https://newsapi.org/v2/everything?q=${encodeURIComponent(searchQuery)}&sortBy=publishedAt&pageSize=${PAGE_SIZE}&page=${page}&apiKey=${API_KEY}`;
       } else {
-        url = `https://newsapi.org/v2/top-headlines?country=us&category=${category.toLowerCase()}&apiKey=${API_KEY}`;
+        url = `https://newsapi.org/v2/top-headlines?country=us&category=${category.toLowerCase()}&pageSize=${PAGE_SIZE}&page=${page}&apiKey=${API_KEY}`;
       }
 
       const res = await fetch(url);
       const data = await res.json();
 
-      if (data.status === 'error') throw new Error(data.message);
+      if (data.status === 'error') throw new Error(data.message || 'API Error');
 
-      const validArticles = (data.articles || []).filter(
-        (a) => a.title && a.url && a.urlToImage
-      );
+      const validArticles = (data.articles || []).filter((a) => a.title && a.url);
 
-      setArticles(validArticles);
+      setArticles((prev) => (page === 1 ? validArticles : [...prev, ...validArticles]));
+      setHasMore(data.totalResults > (page * PAGE_SIZE));
+
+      if (page === 1 && validArticles.length === 0) {
+        setError('No matching articles');
+      }
     } catch (err) {
       setError(err.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_KEY, category, page, searchQuery, view]);
 
-  /* 🔥 FETCH WHEN DEPENDENCIES CHANGE */
   useEffect(() => {
-    fetchNews();
-  }, [category, searchQuery]);
+    if (view === 'home') fetchNews();
+  }, [fetchNews, view]);
 
   if (error && !loading) {
     return <ErrorState onRetry={fetchNews} />;
+  }
+
+  if (view === 'saved') {
+    if (loading) {
+      return (
+        <div className="app-container">
+          <div className="news-grid">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="app-container">
+        <h2 style={{ padding: '2rem 2rem 1rem' }}>Saved Articles</h2>
+
+        {savedArticles.length === 0 ? (
+          <EmptyState message="No saved articles yet" />
+        ) : (
+          <div className="news-grid">
+            <AnimatePresence mode="popLayout">
+              {savedArticles.map((article, i) => (
+                <motion.div key={`${article.url}-${i}`} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+                  <NewsItem article={article} onSavedChange={loadSavedArticles} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
+    );
   }
 
   const featured = articles[0];
@@ -106,9 +163,7 @@ const NewsBoard = ({ searchQuery = '' }) => {
           {categories.map((cat) => (
             <motion.button
               key={cat}
-              className={`category-btn ${
-                category === cat.toLowerCase() ? 'active' : ''
-              }`}
+              className={`category-btn ${category === cat.toLowerCase() ? 'active' : ''}`}
               onClick={() => setCategory(cat)}
               whileTap={{ scale: 0.95 }}
             >
@@ -127,11 +182,7 @@ const NewsBoard = ({ searchQuery = '' }) => {
 
       {/* 🔥 FEATURED ARTICLE */}
       {!loading && featured && (
-        <motion.section
-          className="featured"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+        <motion.section className="featured" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
           <img src={featured.urlToImage} alt="" />
           <div className="featured-content">
             <span>{featured.source?.name}</span>
@@ -146,22 +197,15 @@ const NewsBoard = ({ searchQuery = '' }) => {
 
         {/* 📰 GRID */}
         <motion.div className="news-grid" layout>
-          {loading ? (
-            Array.from({ length: 6 }).map((_, i) => (
-              <SkeletonCard key={i} />
-            ))
+          {loading && page === 1 ? (
+            Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
           ) : rest.length === 0 ? (
-            <EmptyState searchQuery={searchQuery} />
+            <EmptyState message="No articles found" />
           ) : (
             <AnimatePresence mode="popLayout">
               {rest.map((article, index) => (
-                <motion.div
-                  key={article.url || index}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <NewsItem article={article} />
+                <motion.div key={article.url || index} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                  <NewsItem article={article} onSavedChange={loadSavedArticles} />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -183,6 +227,13 @@ const NewsBoard = ({ searchQuery = '' }) => {
         )}
 
       </div>
+
+      {/* 📦 LOAD MORE */}
+      {!loading && hasMore && (
+        <div style={{ textAlign: 'center', padding: '1.5rem' }}>
+          <button className="read-more" onClick={() => setPage((p) => p + 1)}>Load More</button>
+        </div>
+      )}
     </div>
   );
 };

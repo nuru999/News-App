@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, Moon, Sun, Menu } from 'lucide-react';
 
-const Navbar = ({ onSearch }) => {
+const Navbar = ({ onSearch, onViewChange, view }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [query, setQuery] = useState('');
@@ -37,7 +37,24 @@ const Navbar = ({ onSearch }) => {
     <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
       <div className="nav-content">
 
-        <h1 className="logo">NewsMag</h1>
+        <div className="nav-left">
+          <h1 className="logo">NewsMag</h1>
+
+          <div className="view-toggle">
+            <button
+              className={`toggle-btn ${view === 'home' ? 'active' : ''}`}
+              onClick={() => onViewChange('home')}
+            >
+              Home
+            </button>
+            <button
+              className={`toggle-btn ${view === 'saved' ? 'active' : ''}`}
+              onClick={() => onViewChange('saved')}
+            >
+              Saved
+            </button>
+          </div>
+        </div>
 
         <div className="nav-right">
 
