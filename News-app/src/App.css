@@ -484,3 +484,134 @@ body::before {
     margin: 1rem 0;
   }
 }
+
+
+/* =========================
+   💀 SKELETON LOADING
+========================= */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--surface) 25%,
+    var(--border) 50%,
+    var(--surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =========================
+   📱 MOBILE MENU
+========================= */
+.mobile-menu {
+  display: none;
+  border-top: 1px solid var(--border);
+  padding: 1rem;
+  background: var(--surface);
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.mobile-nav-item.active {
+  background: var(--primary);
+  color: white;
+}
+
+.desktop-only {
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  .desktop-only {
+    display: none;
+  }
+  
+  .mobile-menu {
+    display: block;
+  }
+}
+
+/* =========================
+   🎯 SCROLLED NAVBAR
+========================= */
+.navbar.scrolled {
+  box-shadow: var(--shadow);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+[data-theme="dark"] .navbar.scrolled {
+  background: rgba(15, 23, 42, 0.95);
+}
+
+/* =========================
+   🔖 SAVED BADGE
+========================= */
+.news-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.news-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   📊 TRENDING IMPROVEMENTS
+========================= */
+.trending-item {
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+}
+
+.trending-item:last-child {
+  border-bottom: none;
+}
+
+.trending-item p {
+  font-size: 0.9rem;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================
+   ♿ ACCESSIBILITY
+========================= */
+.icon-btn:focus-visible,
+.category-btn:focus-visible,
+.read-more:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
