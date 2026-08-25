@@ -46,9 +46,6 @@ const NewsBoard = ({ searchQuery = '', view = 'home' }) => {
 
   const categories = ['General', 'Technology', 'Sports', 'Business', 'Health', 'Entertainment', 'Science'];
   
-  // ⚠️ SECURITY: Never expose API keys in frontend code for production!
-  // Use environment variables or backend proxy
-  const API_KEY = import.meta.env.VITE_API_KEY || 'YOUR_API_KEY_HERE';
   const PAGE_SIZE = 12;
 
   const loadSavedArticles = useCallback(() => {
@@ -85,22 +82,15 @@ const NewsBoard = ({ searchQuery = '', view = 'home' }) => {
     setError(null);
 
     try {
-      let url;
-      const baseUrl = 'https://newsapi.org/v2';
-      
-      if (searchQuery.trim()) {
-        url = `${baseUrl}/everything?q=${encodeURIComponent(searchQuery)}&sortBy=publishedAt&pageSize=${PAGE_SIZE}&page=${page}&apiKey=${API_KEY}`;
-      } else {
-        url = `${baseUrl}/top-headlines?country=us&category=${category.toLowerCase()}&pageSize=${PAGE_SIZE}&page=${page}&apiKey=${API_KEY}`;
-      }
+      const params = new URLSearchParams({ pageSize: String(PAGE_SIZE), page: String(page) });
+      if (searchQuery.trim()) params.set('q', searchQuery.trim());
+      else params.set('category', category.toLowerCase());
+      const url = `/api/news?${params.toString()}`;
 
       const res = await fetch(url);
       
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP error ${res.status}`);
 
       if (data.status === 'error') {
         throw new Error(data.message || 'API Error');
@@ -122,16 +112,11 @@ const NewsBoard = ({ searchQuery = '', view = 'home' }) => {
     } finally {
       setLoading(false);
     }
-  }, [API_KEY, category, page, searchQuery, view]);
+  }, [category, page, searchQuery, view]);
 
   useEffect(() => {
-    if (view === 'home' && API_KEY && API_KEY !== 'YOUR_API_KEY_HERE') {
-      fetchNews();
-    } else if (view === 'home' && (!API_KEY || API_KEY === 'YOUR_API_KEY_HERE')) {
-      setError('Please add your NewsAPI key to the .env file');
-      setLoading(false);
-    }
-  }, [fetchNews, view, API_KEY]);
+    if (view === 'home') fetchNews();
+  }, [fetchNews, view]);
 
   if (error && !loading && articles.length === 0) {
     return <ErrorState onRetry={fetchNews} />;
