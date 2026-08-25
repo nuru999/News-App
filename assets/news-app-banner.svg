@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">NewsMag React News Application</title>
+  <desc id="desc">News application project banner</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F172A"/>
+      <stop offset=".58" stop-color="#1E3A5F"/>
+      <stop offset="1" stop-color="#7F1D1D"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#F87171"/>
+    </linearGradient>
+    <pattern id="lines" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M0 36 36 0" stroke="#FFFFFF" stroke-opacity=".025"/>
+    </pattern>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#020617" flood-opacity=".45"/></filter>
+  </defs>
+  <rect width="1200" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="360" rx="28" fill="url(#lines)"/>
+  <circle cx="1090" cy="40" r="210" fill="#F87171" opacity=".045"/>
+  <circle cx="1040" cy="360" r="240" fill="#60A5FA" opacity=".045"/>
+
+  <g transform="translate(82 80)">
+    <rect width="126" height="126" rx="30" fill="#FFFFFF" opacity=".09"/>
+    <rect x="25" y="28" width="76" height="72" rx="10" fill="none" stroke="url(#accent)" stroke-width="7"/>
+    <rect x="38" y="42" width="50" height="10" rx="5" fill="#F8FAFC"/>
+    <rect x="38" y="61" width="50" height="7" rx="3.5" fill="#94A3B8"/>
+    <rect x="38" y="76" width="34" height="7" rx="3.5" fill="#94A3B8"/>
+    <path d="M18 106h90" stroke="#CBD5E1" stroke-width="7" stroke-linecap="round"/>
+  </g>
+
+  <text x="246" y="110" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="22" font-weight="700" letter-spacing="6" fill="#93C5FD">NEWSMAG</text>
+  <text x="246" y="169" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="50" font-weight="800" fill="#FFFFFF">React News Application</text>
+  <text x="246" y="213" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="22" fill="#DBEAFE">Search, filter, save and explore current stories in a responsive interface.</text>
+
+  <g transform="translate(246 255)" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="15" font-weight="650" fill="#EFF6FF">
+    <rect width="104" height="40" rx="20" fill="#FFFFFF" opacity=".09"/><circle cx="23" cy="20" r="5" fill="#60A5FA"/><text x="39" y="26">React</text>
+    <g transform="translate(116)"><rect width="94" height="40" rx="20" fill="#FFFFFF" opacity=".09"/><circle cx="23" cy="20" r="5" fill="#93C5FD"/><text x="39" y="26">Vite</text></g>
+    <g transform="translate(222)"><rect width="126" height="40" rx="20" fill="#FFFFFF" opacity=".09"/><circle cx="23" cy="20" r="5" fill="#F87171"/><text x="39" y="26">NewsAPI</text></g>
+  </g>
+
+  <g transform="translate(912 86)" filter="url(#shadow)">
+    <rect width="220" height="200" rx="24" fill="#111827" stroke="#93C5FD" stroke-opacity=".3"/>
+    <rect x="24" y="24" width="172" height="70" rx="12" fill="#27496D"/>
+    <path d="m36 80 33-31 26 20 30-28 57 53H36Z" fill="url(#accent)" opacity=".7"/>
+    <rect x="24" y="116" width="122" height="13" rx="6.5" fill="#475569"/>
+    <rect x="24" y="142" width="172" height="10" rx="5" fill="#334155"/>
+    <rect x="24" y="163" width="138" height="10" rx="5" fill="#334155"/>
+  </g>
+</svg>
