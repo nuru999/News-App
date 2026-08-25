@@ -4,134 +4,64 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=111827" alt="React 18.3" />
-  <img src="https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 5.4" />
-  <img src="https://img.shields.io/badge/Framer_Motion-12-111827?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
-  <img src="https://img.shields.io/badge/NewsAPI-Required-DC2626?style=for-the-badge" alt="NewsAPI required" />
+  <img src="https://img.shields.io/badge/Node.js-Proxy-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js proxy" />
+  <img src="https://img.shields.io/badge/NewsAPI-Server--side-DC2626?style=for-the-badge" alt="Server-side NewsAPI" />
 </p>
 
 ## Overview
 
-**NewsMag** is a responsive React application for searching, filtering, reading, and saving current news stories from NewsAPI.
+**NewsMag** is a responsive React news reader with categories, search, saved stories, themes, skeleton loading, and article cards. Its Node proxy keeps the NewsAPI key out of the Vite bundle and browser network requests.
 
-The project focuses on component-based UI development, asynchronous data handling, persistent browser preferences, responsive layouts, and polished loading states.
-
-## Features
-
-| Area | Capability |
-| --- | --- |
-| **Discovery** | Top headlines, category filtering, search, and featured stories |
-| **Reading** | Article cards with source, time, image fallback, and external links |
-| **Saved stories** | Browser-based bookmarks stored in `localStorage` |
-| **Experience** | Skeleton loaders, empty states, responsive navigation, and animation |
-| **Personalization** | Light and dark themes saved across sessions |
-| **Navigation** | Desktop and mobile menus with saved-article view |
-
-## Technology stack
-
-| Layer | Technology |
-| --- | --- |
-| **UI** | React 18.3 |
-| **Build tool** | Vite 5.4 |
-| **Animation** | Framer Motion |
-| **Icons** | Lucide React |
-| **Data source** | NewsAPI |
-| **State** | React hooks and browser local storage |
-| **Styling** | Custom responsive CSS with theme variables |
-
-## Project structure
+## Security architecture
 
 ```text
-News-App/
-├── News-app/
-│   ├── src/
-│   │   ├── Components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── NewsBoard.jsx
-│   │   │   ├── NewsItem.jsx
-│   │   │   └── ErrorBoundary.jsx
-│   │   ├── hooks/
-│   │   │   └── useNews.js
-│   │   ├── App.jsx
-│   │   ├── App.css
-│   │   └── main.jsx
-│   ├── .env.example
-│   ├── package.json
-│   └── vite.config.js
-├── assets/
-│   └── news-app-banner.svg
-└── README.md
+React browser -> /api/news -> Node proxy -> NewsAPI
+                              key added here ^
 ```
 
-## Run locally
+- The server reads `NEWS_API_KEY`; the frontend has no `VITE_API_KEY`.
+- The proxy uses the `X-Api-Key` header instead of exposing a key in URLs.
+- Search length, category, page, and page-size inputs are restricted.
+- API calls are rate-limited and time out after eight seconds.
+- Error responses do not reveal upstream credentials.
 
-### 1. Clone and install
+## Run locally
 
 ```bash
 git clone https://github.com/nuru999/News-App.git
 cd News-App/News-app
 npm install
+cp .env.example .env
 ```
 
-### 2. Configure NewsAPI
-
-Create an account at [newsapi.org](https://newsapi.org), then copy the example environment file.
+Set `NEWS_API_KEY` in `.env`, then start the API and frontend in separate terminals:
 
 ```bash
-cp .env.example .env.local
-```
+# Terminal 1
+set -a && source .env && set +a
+npm run dev:api
 
-Set your development key:
-
-```env
-VITE_API_KEY=your_newsapi_key
-```
-
-### 3. Start the development server
-
-```bash
+# Terminal 2
 npm run dev
 ```
 
-Open the local URL printed by Vite, normally [http://localhost:5173](http://localhost:5173).
+Vite proxies `/api` requests to `http://localhost:3001` during development.
 
-## Available scripts
+## Production warning
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the Vite development server |
-| `npm run build` | Create a production bundle |
-| `npm run preview` | Preview the bundle locally |
-| `npm run lint` | Run ESLint |
+NewsAPI's free Developer plan is for development and testing only. Do not deploy this application publicly with that plan. Before a public deployment, either:
 
-## API-key and deployment warning
+1. Upgrade to a NewsAPI plan that permits production use.
+2. Replace NewsAPI with a provider whose licence permits the intended public use.
+3. Keep the project as a local portfolio demonstration.
 
-Vite environment variables are inserted into the browser bundle. Using `.env.local` keeps a key out of Git history, but it **does not make the key private after deployment**.
+After the licence requirement is resolved, Render can build and serve the combined app with:
 
-For a safe public deployment:
-
-1. Create a small backend or serverless proxy.
-2. Store the NewsAPI key only on the server.
-3. Restrict allowed request parameters and add rate limiting.
-4. Have the React app call the proxy instead of NewsAPI directly.
-5. Confirm that the selected NewsAPI plan permits production browser use.
-
-The repository currently has no working GitHub Pages deployment, so the project is presented as a local development application until that proxy and deployment configuration are added.
-
-## Current technical improvements
-
-- Wire the existing `ErrorBoundary` into the application root.
-- Consolidate fetching logic so `NewsBoard` and `useNews` do not duplicate responsibilities.
-- Add unit tests for search, saved stories, and API error states.
-- Add request cancellation for rapidly changing searches.
-- Add a secure proxy and deployment workflow.
-- Add pagination or controlled infinite loading.
-
-## Data and attribution
-
-Article content, images, authors, and source names belong to their respective publishers and are retrieved through NewsAPI. The application links readers to the original publisher pages.
+- Build command: `cd News-app && npm install && npm run build`
+- Start command: `cd News-app && npm start`
+- Secret environment variable: `NEWS_API_KEY`
+- Health check: `/api/health`
 
 ---
 
-<p align="center">
-  Built by <a href="https://github.com/nuru999">Nuru Amudi</a>.
-</p>
+<p align="center">Built by <a href="https://github.com/nuru999">Nuru Amudi</a>.</p>
