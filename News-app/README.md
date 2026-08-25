@@ -1,89 +1,67 @@
-# 📰 News App
+<p align="center">
+  <img src="../assets/news-app-banner.svg" width="100%" alt="NewsMag React News Application" />
+</p>
 
-A modern, fast news application built with React and Vite.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=111827" alt="React 18.3" />
+  <img src="https://img.shields.io/badge/Node.js-Proxy-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node.js proxy" />
+  <img src="https://img.shields.io/badge/NewsAPI-Server--side-DC2626?style=for-the-badge" alt="Server-side NewsAPI" />
+</p>
 
-## 🚀 Tech Stack
+## Overview
 
-- **Frontend:** React 18
-- **Build Tool:** Vite
-- **Styling:** Bootstrap 5.3.7
-- **Package Manager:** npm
+**NewsMag** is a responsive React news reader with categories, search, saved stories, themes, skeleton loading, and article cards. Its Node proxy keeps the NewsAPI key out of the Vite bundle and browser network requests.
 
-## 📁 Project Structure
-News-app/
-├── src/
-│   ├── Components/
-│   │   ├── Navbar.jsx      # Navigation component
-│   │   ├── NewsBoard.jsx   # Main news display board
-│   │   └── NewsItem.jsx    # Individual news card component
-│   ├── App.jsx             # Root application component
-│   ├── App.css             # Application styles
-│   ├── main.jsx            # Application entry point
-│   └── index.css           # Global styles
-├── .env                    # Environment variables
-├── .gitignore             # Git ignore rules
-├── index.html             # HTML template
-├── package.json           # Dependencies and scripts
-└── vite.config.js         # Vite configuration
+## Security architecture
 
+```text
+React browser -> /api/news -> Node proxy -> NewsAPI
+                              key added here ^
+```
 
-## 🛠️ Installation & Setup
+- The server reads `NEWS_API_KEY`; the frontend has no `VITE_API_KEY`.
+- The proxy uses the `X-Api-Key` header instead of exposing a key in URLs.
+- Search length, category, page, and page-size inputs are restricted.
+- API calls are rate-limited and time out after eight seconds.
+- Error responses do not reveal upstream credentials.
 
-1. **Clone the repository:**
-   ```bash
-   git clone <your-repo-url>
-   cd News-app
-2. **Install dependencies:**
-    bash
-        npm install
+## Run locally
 
-3. **Set up environment variables:**
-Create a .env file in the root directory
-Add your API keys (e.g., news API key):
+```bash
+git clone https://github.com/nuru999/News-App.git
+cd News-App/News-app
+npm install
+cp .env.example .env
+```
 
-    VITE_NEWS_API_KEY=your_api_key_here.
+Set `NEWS_API_KEY` in `.env`, then start the API and frontend in separate terminals:
 
-4. **Start the development server:**
+```bash
+# Terminal 1
+set -a && source .env && set +a
+npm run dev:api
 
-    bash
-        npm run dev
+# Terminal 2
+npm run dev
+```
 
-5. **Open your browser:**
-Navigate to http://localhost:5173
-📜 Available Scripts:
+Vite proxies `/api` requests to `http://localhost:3001` during development.
 
-| Script            | Description                       |
-| ----------------- | --------------------------------- |
-| `npm run dev`     | Start development server with HMR |
-| `npm run build`   | Build for production              |
-| `npm run preview` | Preview production build locally  |
-| `npm run lint`    | Run ESLint for code quality       |
+## Production warning
 
+NewsAPI's free Developer plan is for development and testing only. Do not deploy this application publicly with that plan. Before a public deployment, either:
 
-✨ Features
-⚡ Lightning Fast - Powered by Vite's HMR and optimized build
-📱 Responsive Design - Mobile-first approach with Bootstrap
-🔄 Real-time Updates - Hot Module Replacement for instant feedback
-🗞️ News Categories - Browse news by different categories
-🔍 Search Functionality - Find specific news articles
-🔧 Configuration
-The project uses two official Vite plugins for React:
-@vitejs/plugin-react - Uses Babel for Fast Refresh
-@vitejs/plugin-react-swc - Uses SWC for Fast Refresh (alternative)
-📝 Environment Variables
-Make sure to set up the following in your .env file:
+1. Upgrade to a NewsAPI plan that permits production use.
+2. Replace NewsAPI with a provider whose licence permits the intended public use.
+3. Keep the project as a local portfolio demonstration.
 
-VITE_NEWS_API_KEY=your_news_api_key
+After the licence requirement is resolved, Render can build and serve the combined app with:
 
-🤝 Contributing
-Fork the repository
-Create a feature branch (git checkout -b feature/AmazingFeature)
-Commit your changes (git commit -m 'Add some AmazingFeature')
-Push to the branch (git push origin feature/AmazingFeature)
-Open a Pull Request
-📄 License
-This project is open source and available under the MIT License.
+- Build command: `cd News-app && npm install && npm run build`
+- Start command: `cd News-app && npm start`
+- Secret environment variable: `NEWS_API_KEY`
+- Health check: `/api/health`
 
-Built with ❤️ using React + Vite:
+---
 
-Simply copy this content and paste it into your `README.md` file in VS Code. You can customize the sections (especially the API key setup and features) based on your specific implementation details!
+<p align="center">Built by <a href="https://github.com/nuru999">Nuru Amudi</a>.</p>
