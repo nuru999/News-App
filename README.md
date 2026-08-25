@@ -1,257 +1,137 @@
-# 📰 News App - Enhanced Edition
+<p align="center">
+  <img src="./assets/news-app-banner.svg" width="100%" alt="NewsMag React News Application" />
+</p>
 
-A modern, production-ready news application built with **React 18** and **Vite**, featuring real-time news from **NewsAPI**.
+<p align="center">
+  <img src="https://img.shields.io/badge/React-18.3-61DAFB?style=for-the-badge&logo=react&logoColor=111827" alt="React 18.3" />
+  <img src="https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 5.4" />
+  <img src="https://img.shields.io/badge/Framer_Motion-12-111827?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/NewsAPI-Required-DC2626?style=for-the-badge" alt="NewsAPI required" />
+</p>
 
-## ✨ Features
+## Overview
 
-### Core Features
-- 🔍 **Real-time News Search** - Powered by NewsAPI
-- 📂 **Category Filtering** - Browse by General, Tech, Sports, Business, Health, Entertainment, Science
-- 💾 **Save Articles** - Bookmark articles locally with `localStorage`
-- 🎯 **Featured Article** - Highlight top story with large preview
-- 📱 **Responsive Design** - Works seamlessly on all devices
-- ⚡ **Fast Loading** - Skeleton loaders for smooth UX
+**NewsMag** is a responsive React application for searching, filtering, reading, and saving current news stories from NewsAPI.
 
-### Technical Features
-- ✅ **Error Boundaries** - Graceful error handling with component recovery
-- ✅ **Custom Hooks** - `useNews` for centralized state management
-- ✅ **Pagination** - Load more articles infinitely
-- ✅ **Animations** - Smooth transitions with Framer Motion
-- ✅ **Search & Filter** - Dynamic filtering with instant results
-- ✅ **Trending Sidebar** - Quick access to top articles
-- ✅ **Security** - API key via environment variables (never exposed)
+The project focuses on component-based UI development, asynchronous data handling, persistent browser preferences, responsive layouts, and polished loading states.
 
-## 🚀 Tech Stack
+## Features
 
-| Component | Technology |
-|-----------|-----------|
-| **Frontend** | React 18, Vite 5 |
-| **Styling** | Custom CSS + Framer Motion |
-| **State** | React Hooks |
-| **API** | NewsAPI.org |
-| **Package Manager** | npm |
+| Area | Capability |
+| --- | --- |
+| **Discovery** | Top headlines, category filtering, search, and featured stories |
+| **Reading** | Article cards with source, time, image fallback, and external links |
+| **Saved stories** | Browser-based bookmarks stored in `localStorage` |
+| **Experience** | Skeleton loaders, empty states, responsive navigation, and animation |
+| **Personalization** | Light and dark themes saved across sessions |
+| **Navigation** | Desktop and mobile menus with saved-article view |
 
-## 📁 Project Structure
+## Technology stack
 
+| Layer | Technology |
+| --- | --- |
+| **UI** | React 18.3 |
+| **Build tool** | Vite 5.4 |
+| **Animation** | Framer Motion |
+| **Icons** | Lucide React |
+| **Data source** | NewsAPI |
+| **State** | React hooks and browser local storage |
+| **Styling** | Custom responsive CSS with theme variables |
+
+## Project structure
+
+```text
+News-App/
+├── News-app/
+│   ├── src/
+│   │   ├── Components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── NewsBoard.jsx
+│   │   │   ├── NewsItem.jsx
+│   │   │   └── ErrorBoundary.jsx
+│   │   ├── hooks/
+│   │   │   └── useNews.js
+│   │   ├── App.jsx
+│   │   ├── App.css
+│   │   └── main.jsx
+│   ├── .env.example
+│   ├── package.json
+│   └── vite.config.js
+├── assets/
+│   └── news-app-banner.svg
+└── README.md
 ```
-News-app/
-├── src/
-│   ├── Components/
-│   │   ├── Navbar.jsx           # Navigation & search bar
-│   │   ├── NewsBoard.jsx        # Main news grid
-│   │   ├── NewsItem.jsx         # Individual article card
-│   │   └── ErrorBoundary.jsx    # Error handler (NEW)
-│   ├── hooks/
-│   │   └── useNews.js           # Custom hook for news logic (NEW)
-│   ├── App.jsx                  # Root component
-│   ├── App.css                  # Global styles
-│   └── main.jsx                 # Entry point
-├── .env.example                 # Environment template (NEW)
-├── vite.config.js              # Vite configuration
-├── package.json                # Dependencies
-└── index.html                  # HTML template
-```
 
-## 🔧 Setup & Installation
+## Run locally
 
-### 1. Prerequisites
-- Node.js 16+ (recommended 18+)
-- npm or yarn
+### 1. Clone and install
 
-### 2. Install Dependencies
 ```bash
-cd News-app
+git clone https://github.com/nuru999/News-App.git
+cd News-App/News-app
 npm install
 ```
 
-### 3. Get NewsAPI Key
-1. Visit [newsapi.org](https://newsapi.org)
-2. Sign up for free account
-3. Copy your API key
+### 2. Configure NewsAPI
 
-### 4. Configure Environment
+Create an account at [newsapi.org](https://newsapi.org), then copy the example environment file.
+
 ```bash
-# Copy example to actual env file
 cp .env.example .env.local
-
-# Edit .env.local and add your API key
-VITE_API_KEY=your_newsapi_key_here
 ```
 
-### 5. Run Development Server
+Set your development key:
+
+```env
+VITE_API_KEY=your_newsapi_key
+```
+
+### 3. Start the development server
+
 ```bash
 npm run dev
 ```
-Server runs at: `http://localhost:5173`
 
-### 6. Build for Production
-```bash
-npm run build
-npm run preview
-```
+Open the local URL printed by Vite, normally [http://localhost:5173](http://localhost:5173).
 
-## 📖 How It Works
+## Available scripts
 
-### Architecture
-```
-┌─────────────────────────────────────┐
-│         App (Root)                  │
-├─────────────────────────────────────┤
-│ Navbar (Search + View Toggle)       │
-├─────────────────────────────────────┤
-│  ErrorBoundary                      │
-│  └─ NewsBoard                       │
-│     ├─ Featured Article             │
-│     ├─ News Grid                    │
-│     │  └─ NewsItem × N              │
-│     └─ Sidebar (Trending)           │
-└─────────────────────────────────────┘
-```
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the Vite development server |
+| `npm run build` | Create a production bundle |
+| `npm run preview` | Preview the bundle locally |
+| `npm run lint` | Run ESLint |
 
-### Data Flow
-1. **User Action** → Search/Category/View change
-2. **useNews Hook** → Fetches from NewsAPI
-3. **State Update** → Articles, loading, error
-4. **Component Render** → NewsBoard displays results
-5. **Error Boundary** → Catches rendering errors
-6. **Save Action** → Stores to localStorage
+## API-key and deployment warning
 
-### Key Functions
+Vite environment variables are inserted into the browser bundle. Using `.env.local` keeps a key out of Git history, but it **does not make the key private after deployment**.
 
-#### `useNews()` Custom Hook
-```javascript
-const { articles, loading, error, fetchNews } = useNews();
+For a safe public deployment:
 
-fetchNews(category, searchQuery, page);
-// Returns: articles[], loading bool, error string, pagination info
-```
+1. Create a small backend or serverless proxy.
+2. Store the NewsAPI key only on the server.
+3. Restrict allowed request parameters and add rate limiting.
+4. Have the React app call the proxy instead of NewsAPI directly.
+5. Confirm that the selected NewsAPI plan permits production browser use.
 
-#### Error Handling
-- API errors caught and displayed
-- Component errors caught by ErrorBoundary
-- Network errors show retry button
-- Missing API key detected early
+The repository currently has no working GitHub Pages deployment, so the project is presented as a local development application until that proxy and deployment configuration are added.
 
-#### LocalStorage for Saved Articles
-```javascript
-localStorage.getItem('savedNews')   // Load saved articles
-localStorage.setItem('savedNews')   // Save articles
-```
+## Current technical improvements
 
-## 🎨 Component Features
+- Wire the existing `ErrorBoundary` into the application root.
+- Consolidate fetching logic so `NewsBoard` and `useNews` do not duplicate responsibilities.
+- Add unit tests for search, saved stories, and API error states.
+- Add request cancellation for rapidly changing searches.
+- Add a secure proxy and deployment workflow.
+- Add pagination or controlled infinite loading.
 
-### NewsBoard Component
-- **Dynamic Categories** - Click to filter by topic
-- **Featured Section** - Showcase top article
-- **Grid Layout** - Responsive card grid
-- **Pagination** - "Load More" button
-- **Skeleton Loaders** - Loading state UI
-- **Trending Sidebar** - Quick access panel
-- **Empty States** - Helpful messages when no results
+## Data and attribution
 
-### NewsItem Component
-- **Card Layout** - Image + content + metadata
-- **Read More Link** - External link to article
-- **Save Button** - Bookmark with localStorage
-- **Source Badge** - Article source display
-
-### Error Boundary
-- **Catches Errors** - Prevents white screen crashes
-- **Shows Message** - User-friendly error text
-- **Reload Option** - Quick recovery action
-
-## 🔐 Security & Best Practices
-
-✅ **API Key Protection**
-- Never hardcode keys in source
-- Use `.env.local` (git-ignored)
-- Example: `.env.example` for documentation
-
-✅ **Data Validation**
-- Filters out invalid articles
-- Checks required fields (title, url, image)
-- Removes "[Removed]" entries (blocked articles)
-
-✅ **Error Handling**
-- Try-catch in async operations
-- Error Boundary for React errors
-- User-friendly error messages
-
-✅ **Performance**
-- Lazy loading for images
-- Pagination to limit data
-- Debounced search (optional enhancement)
-- Memoized callbacks
-
-## 🚀 Future Enhancements
-
-- [ ] Backend proxy for secure API calls
-- [ ] Progressive Web App (PWA) support
-- [ ] Offline reading capability
-- [ ] Dark/Light theme toggle
-- [ ] Article sharing to social media
-- [ ] Read time estimation
-- [ ] Personalized news preferences
-- [ ] Multi-language support
-- [ ] Advanced filters (date range, language)
-- [ ] Notifications for breaking news
-
-## 🐛 Troubleshooting
-
-### "API Error: 401"
-**Cause**: Invalid or missing API key
-**Solution**: 
-1. Check `.env.local` file exists
-2. Verify key in newsapi.org dashboard
-3. Ensure key is copied exactly
-
-### "No articles found"
-**Cause**: Search term has no results OR rate limit hit
-**Solution**:
-1. Try different search term
-2. Wait 15 minutes (free tier rate limit)
-3. Upgrade to paid plan on newsapi.org
-
-### "Failed to fetch news"
-**Cause**: Network error or CORS issue
-**Solution**:
-1. Check internet connection
-2. Try with VPN if blocked
-3. Check browser console for details
-
-### Blank Page
-**Cause**: React error or missing dependencies
-**Solution**:
-1. Check browser console (F12)
-2. Run `npm install` again
-3. Clear node_modules and reinstall
-
-## 📊 API Endpoints Used
-
-### Top Headlines
-```
-GET https://newsapi.org/v2/top-headlines?country=us&category={category}&pageSize={size}&page={page}&apiKey={key}
-```
-
-### Everything (Search)
-```
-GET https://newsapi.org/v2/everything?q={query}&sortBy=publishedAt&pageSize={size}&page={page}&apiKey={key}
-```
-
-## 📝 Available Scripts
-
-```bash
-npm run dev       # Start development server
-npm run build     # Build for production
-npm run preview   # Preview production build
-npm run lint      # Run ESLint
-```
-
-## 📜 License
-
-Open source. Free to use for learning and development.
+Article content, images, authors, and source names belong to their respective publishers and are retrieved through NewsAPI. The application links readers to the original publisher pages.
 
 ---
 
-**Last Updated**: May 7, 2024
-**Maintained By**: Portfolio Projects Team
+<p align="center">
+  Built by <a href="https://github.com/nuru999">Nuru Amudi</a>.
+</p>
